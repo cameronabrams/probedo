@@ -7,7 +7,7 @@ import textwrap
 import logging
 import importlib.metadata
 __probedo_version__ = importlib.metadata.version("probedo")
-from .stringthings import banner, banner_message
+from .stringthings import banner, banner_message,aa_olc,join_ri,seqstr
 from pidibble.pdbparse import PDBParser
 
 logger=logging.getLogger(__name__)
@@ -34,6 +34,19 @@ def seq(args):
         if not r in rlist:
             rlist.append(r)
     print(f'{len(rlist)} unique residues')
+    chains={}
+    for r in rlist:
+        if not r.chainID in chains:
+            chains[r.chainID]=[]
+        chains[r.chainID].append(r)
+    for c in chains:
+        a=""
+        n=[]
+        for r in chains[c]:
+            a+=aa_olc[r.resName]
+            n.append(join_ri(r.seqNum,r.iCode))
+        print(f'Chain {c}:')
+        print(seqstr(a,n))
 
 def cli():
     commands={

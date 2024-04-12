@@ -9,6 +9,30 @@ import os
 
 import importlib.metadata
 
+aa_olc={
+    "ALA":"A",
+    "ARG":"R",
+    "ASN":"N",
+    "ASP":"D",
+    "CYS":"C",
+    "GLN":"Q",
+    "GLU":"E",
+    "GLY":"G",
+    "HIS":"H",
+    "HSD":"H",
+    "HSE":"H",
+    "ILE":"I",
+    "LEU":"L",
+    "LYS":"K",
+    "MET":"M",
+    "PHE":"F",
+    "PRO":"P",
+    "SER":"S",
+    "THR":"T",
+    "TRP":"W",
+    "TYR":"Y",
+    "VAL":"V"
+}
 __probedo_version__ = importlib.metadata.version("probedo")
 
 banner_message="""
@@ -105,7 +129,7 @@ def split_ri(ri):
 
 def join_ri(resseqnum,insertion):
     if insertion=='':
-        return resseqnum
+        return str(resseqnum)
     return f'{resseqnum}{insertion}'
 
 def ri_range(val,split_chars=['-','#']):
@@ -116,3 +140,41 @@ def ri_range(val,split_chars=['-','#']):
         for s in the_splits:
             the_split.extend(s)
     return [split_ri(x) for x in the_split]
+
+def seqstr(s,n,gap=5,ll=60):
+    print(n[0],n[-1])
+    assert len(s)==len(n)
+    nlines=len(s)//ll
+    if len(s)%ll>0:
+        nlines+=1
+    ss=""
+    for l in range(nlines):
+        ss+='\n'
+        left=l*ll
+        right=min((l+1)*ll,len(s))
+        nn=[split_ri(x)[0] for x in n[left:right]]
+        # digits={}
+        acc=True
+        d=1
+        dlabs=[]
+        while acc:
+            acc=any([x>10**(d-1) for x in nn])
+            if acc:
+                dlabs.append("".join([str((x%(10**d))//(10**(d-1))) for x in nn]))
+                d+=1
+        fst=True
+        for ls in dlabs[::-1]:
+            if fst:
+                ts=ls.replace('0',' ')
+            else:
+                ts=ls
+            fst=False
+            tts=""
+            for k,cc in enumerate(ts):
+                if not k%gap:
+                    tts+=cc
+                else:
+                    tts+=" "
+            ss+=tts+'\n'
+        ss+=s[left:right]+'\n'
+    return ss
