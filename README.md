@@ -11,7 +11,6 @@ $ probedo 4zmj --seq
 .....
 ```
 
-
 ## Release History
 * 1.0.0
     * Initial version
